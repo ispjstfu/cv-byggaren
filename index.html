@@ -1,0 +1,1758 @@
+<!DOCTYPE html>
+<html lang="sv">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CV-byggaren - ATS-vänlig CV-skapare</title>
+
+    <!-- Bootstrap 5 CSS CDN -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome Icons CDN -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <style>
+      /* CSS Variables for accent color */
+      :root {
+        --accent-color: #007bff;
+      }
+
+      /* Custom styles for CV builder */
+      .cv-preview {
+        background: white;
+        min-height: 100vh;
+        padding: 2rem;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+      }
+
+      .form-section {
+        margin-bottom: 1.5rem;
+      }
+
+      .section-header {
+        background: #f8f9fa;
+        padding: 0.75rem 1rem;
+        border-left: 4px solid var(--accent-color);
+        margin-bottom: 1rem;
+        font-weight: 600;
+      }
+
+      .item-card {
+        border: 1px solid #dee2e6;
+        border-radius: 0.375rem;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        background: #fff;
+      }
+
+      .item-controls {
+        display: flex;
+        gap: 0.25rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .btn-sm {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+      }
+
+      /* CV Preview Styles */
+      .cv-header {
+        border-bottom: 2px solid var(--accent-color);
+        padding-bottom: 1rem;
+        margin-bottom: 2rem;
+      }
+
+      .cv-name {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #000000;
+        margin-bottom: 0.5rem;
+      }
+
+      .cv-title {
+        font-size: 1.25rem;
+        color: #000000;
+        margin-bottom: 1rem;
+      }
+
+      .cv-contact {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        font-size: 0.95rem;
+      }
+
+      .cv-contact i {
+        margin-right: 0;
+        color: #666;
+        width: 16px;
+      }
+
+      .cv-contact a {
+        color: #000000 !important;
+        text-decoration: none;
+      }
+
+      .cv-contact a:hover {
+        text-decoration: underline;
+      }
+
+      /* Project and link section links use accent color */
+      .cv-section a {
+        color: var(--accent-color) !important;
+        text-decoration: none;
+      }
+
+      .cv-section a:hover {
+        text-decoration: underline;
+      }
+
+      .cv-section {
+        margin-bottom: 2rem;
+      }
+
+      .cv-section h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #2c3e50;
+        border-bottom: 1px solid #dee2e6;
+        padding-bottom: 0.5rem;
+        margin-bottom: 1rem;
+      }
+
+      .cv-section h2 i {
+        margin-right: 0.5rem;
+        color: var(--accent-color);
+      }
+
+      /* Color picker styling */
+      .form-control-color {
+        width: 3rem;
+        height: 2.5rem;
+        padding: 0.375rem;
+        border: 2px solid #dee2e6;
+        border-radius: 0.375rem;
+        cursor: pointer;
+      }
+
+      .form-control-color:hover {
+        border-color: var(--accent-color);
+      }
+
+      .cv-item {
+        margin-bottom: 1.5rem;
+      }
+
+      .cv-item-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 0.25rem;
+      }
+
+      .cv-item-meta {
+        font-size: 0.9rem;
+        color: #6c757d;
+        margin-bottom: 0.5rem;
+      }
+
+      .cv-item-description {
+        font-size: 0.95rem;
+        line-height: 1.5;
+      }
+
+      .cv-item-description ul {
+        margin-bottom: 0;
+        padding-left: 1.2rem;
+      }
+
+      .cv-item-description li {
+        margin-bottom: 0.25rem;
+      }
+
+      .skills-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+
+      .skill-tag {
+        background: #e9ecef;
+        color: #495057;
+        padding: 0.25rem 0.75rem;
+        border-radius: 1rem;
+        font-size: 0.85rem;
+      }
+
+      .profile-image {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid var(--accent-color);
+      }
+
+      .profile-image-container {
+        text-align: right;
+      }
+
+      /* Print Styles */
+      @media print {
+        .form-container {
+          display: none !important;
+        }
+
+        .cv-preview {
+          box-shadow: none;
+          padding: 0;
+          margin: 0;
+        }
+
+        .container-fluid {
+          padding: 0;
+        }
+
+        .row {
+          margin: 0;
+        }
+
+        .col-md-6 {
+          width: 100% !important;
+          max-width: 100% !important;
+          flex: 0 0 100% !important;
+        }
+
+        .cv-preview {
+          font-size: 12pt;
+          line-height: 1.4;
+        }
+
+        .cv-name {
+          font-size: 24pt;
+        }
+
+        .cv-title {
+          font-size: 14pt;
+        }
+
+        .cv-section h2 {
+          font-size: 16pt;
+          page-break-after: avoid;
+        }
+
+        .cv-item {
+          page-break-inside: avoid;
+          margin-bottom: 1rem;
+        }
+
+        .cv-item-title {
+          font-size: 13pt;
+        }
+
+        .cv-item-meta {
+          font-size: 11pt;
+        }
+
+        .cv-item-description {
+          font-size: 11pt;
+        }
+
+        .skills-tags {
+          gap: 0.25rem;
+        }
+
+        .skill-tag {
+          font-size: 10pt;
+          padding: 0.2rem 0.5rem;
+        }
+
+        .profile-image {
+          width: 100px;
+          height: 100px;
+        }
+
+        /* Fix profile image positioning in print */
+        .cv-header .row {
+          display: flex;
+          align-items: flex-start;
+        }
+
+        .cv-header .col-md-8 {
+          flex: 0 0 65%;
+          max-width: 65%;
+        }
+
+        .cv-header .col-md-4 {
+          flex: 0 0 35%;
+          max-width: 35%;
+          text-align: right;
+        }
+
+        .profile-image-container {
+          margin-top: 0;
+          padding-top: 0;
+        }
+
+        /* Ensure contact info stays on one line */
+        .cv-contact {
+          display: flex !important;
+          flex-direction: row !important;
+          flex-wrap: nowrap !important;
+          gap: 1rem;
+        }
+
+        .cv-contact span {
+          display: inline-block !important;
+          white-space: nowrap;
+          margin-right: 0;
+        }
+
+        @page {
+          size: A4;
+          margin: 1cm;
+        }
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 768px) {
+        .cv-contact {
+          flex-direction: row;
+          gap: 0.25rem;
+          flex-wrap: wrap;
+        }
+
+        .cv-contact span {
+          display: inline-block;
+          margin-right: 1rem;
+        }
+
+        .profile-image-container {
+          text-align: center;
+          margin-top: 1rem;
+        }
+
+        .cv-name {
+          font-size: 2rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container-fluid">
+      <div class="row">
+        <!-- Form Panel -->
+        <div class="col-md-6 form-container">
+          <div class="p-3">
+            <h1 class="h3 mb-4">CV-byggaren</h1>
+
+            <!-- Color Picker -->
+            <div class="mb-4">
+              <label for="accentColor" class="form-label">
+                <i class="fas fa-palette"></i> Accentfärg
+              </label>
+              <div class="d-flex gap-2 align-items-center">
+                <input
+                  type="color"
+                  class="form-control form-control-color"
+                  id="accentColor"
+                  value="#007bff"
+                  title="Välj accentfärg"
+                />
+                <span class="text-muted small"
+                  >Välj färg för länkar, ikoner och streck</span
+                >
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="d-flex gap-2 mb-4 flex-wrap">
+              <button type="button" class="btn btn-primary" id="newCvBtn">
+                <i class="fas fa-plus"></i> Nytt CV
+              </button>
+              <button
+                type="button"
+                class="btn btn-outline-secondary"
+                id="importBtn"
+              >
+                <i class="fas fa-upload"></i> Importera JSON
+              </button>
+              <button
+                type="button"
+                class="btn btn-outline-secondary"
+                id="exportBtn"
+              >
+                <i class="fas fa-download"></i> Exportera JSON
+              </button>
+              <button type="button" class="btn btn-success" id="printBtn">
+                <i class="fas fa-print"></i> Skriv ut / Spara som PDF
+              </button>
+            </div>
+
+            <!-- Hidden file input for import -->
+            <input
+              type="file"
+              id="importFile"
+              accept=".json"
+              style="display: none"
+            />
+
+            <!-- Personal Information -->
+            <div class="form-section">
+              <div class="section-header">Personuppgifter</div>
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label for="firstName" class="form-label">Förnamn *</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="firstName"
+                    placeholder="Ditt förnamn"
+                  />
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label for="lastName" class="form-label">Efternamn *</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="lastName"
+                    placeholder="Ditt efternamn"
+                  />
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label for="title" class="form-label">Titel/Roll</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="title"
+                    placeholder="t.ex. Utvecklare, Designer"
+                  />
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label for="location" class="form-label">Plats</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="location"
+                    placeholder="t.ex. Stockholm, Sverige"
+                  />
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label for="phone" class="form-label">Telefon</label>
+                  <input
+                    type="tel"
+                    class="form-control"
+                    id="phone"
+                    placeholder="+46 70 123 45 67"
+                  />
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label for="email" class="form-label">E-post</label>
+                  <input
+                    type="email"
+                    class="form-control"
+                    id="email"
+                    placeholder="namn@email.com"
+                  />
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="profileImage" class="form-label"
+                  >Profilbild (valfri)</label
+                >
+                <input
+                  type="file"
+                  class="form-control"
+                  id="profileImage"
+                  accept="image/*"
+                />
+                <div id="imagePreview" class="mt-2" style="display: none">
+                  <img
+                    id="previewImg"
+                    src=""
+                    alt="Förhandsvisning"
+                    style="
+                      max-width: 100px;
+                      max-height: 100px;
+                      border-radius: 50%;
+                      border: 2px solid var(--accent-color);
+                    "
+                  />
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-outline-danger ms-2"
+                    id="removeImageBtn"
+                  >
+                    Ta bort bild
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Summary -->
+            <div class="form-section">
+              <div class="section-header">Sammanfattning</div>
+              <div class="mb-3">
+                <label for="summary" class="form-label"
+                  >Professionell sammanfattning</label
+                >
+                <textarea
+                  class="form-control"
+                  id="summary"
+                  rows="4"
+                  placeholder="Kort beskrivning av din professionella profil och nyckelkompetenser..."
+                ></textarea>
+              </div>
+            </div>
+
+            <!-- Experience -->
+            <div class="form-section">
+              <div
+                class="section-header d-flex justify-content-between align-items-center"
+              >
+                <span>Erfarenhet</span>
+                <button
+                  type="button"
+                  class="btn btn-sm btn-outline-primary"
+                  id="addExperienceBtn"
+                >
+                  <i class="fas fa-plus"></i> Lägg till
+                </button>
+              </div>
+              <div id="experienceList"></div>
+            </div>
+
+            <!-- Education -->
+            <div class="form-section">
+              <div
+                class="section-header d-flex justify-content-between align-items-center"
+              >
+                <span>Utbildning</span>
+                <button
+                  type="button"
+                  class="btn btn-sm btn-outline-primary"
+                  id="addEducationBtn"
+                >
+                  <i class="fas fa-plus"></i> Lägg till
+                </button>
+              </div>
+              <div id="educationList"></div>
+            </div>
+
+            <!-- Projects -->
+            <div class="form-section">
+              <div
+                class="section-header d-flex justify-content-between align-items-center"
+              >
+                <span>Projekt</span>
+                <button
+                  type="button"
+                  class="btn btn-sm btn-outline-primary"
+                  id="addProjectBtn"
+                >
+                  <i class="fas fa-plus"></i> Lägg till
+                </button>
+              </div>
+              <div id="projectList"></div>
+            </div>
+
+            <!-- Skills -->
+            <div class="form-section">
+              <div
+                class="section-header d-flex justify-content-between align-items-center"
+              >
+                <span>Färdigheter</span>
+                <button
+                  type="button"
+                  class="btn btn-sm btn-outline-primary"
+                  id="addSkillBtn"
+                >
+                  <i class="fas fa-plus"></i> Lägg till
+                </button>
+              </div>
+              <div id="skillsList"></div>
+            </div>
+
+            <!-- Languages -->
+            <div class="form-section">
+              <div
+                class="section-header d-flex justify-content-between align-items-center"
+              >
+                <span>Språk</span>
+                <button
+                  type="button"
+                  class="btn btn-sm btn-outline-primary"
+                  id="addLanguageBtn"
+                >
+                  <i class="fas fa-plus"></i> Lägg till
+                </button>
+              </div>
+              <div id="languagesList"></div>
+            </div>
+
+            <!-- Links -->
+            <div class="form-section">
+              <div
+                class="section-header d-flex justify-content-between align-items-center"
+              >
+                <span>Länkar & Certifikat</span>
+                <button
+                  type="button"
+                  class="btn btn-sm btn-outline-primary"
+                  id="addLinkBtn"
+                >
+                  <i class="fas fa-plus"></i> Lägg till
+                </button>
+              </div>
+              <div id="linksList"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CV Preview Panel -->
+        <div class="col-md-6">
+          <div class="cv-preview" id="cvPreview">
+            <!-- CV content will be generated here -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hidden templates for dynamic content -->
+    <template id="experienceTemplate">
+      <div class="item-card">
+        <div class="item-controls">
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-danger remove-item"
+          >
+            <i class="fas fa-trash"></i> Ta bort
+          </button>
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-secondary move-up"
+          >
+            <i class="fas fa-arrow-up"></i>
+          </button>
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-secondary move-down"
+          >
+            <i class="fas fa-arrow-down"></i>
+          </button>
+        </div>
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Titel</label>
+            <input
+              type="text"
+              class="form-control"
+              placeholder="t.ex. Senior Utvecklare"
+            />
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Företag</label>
+            <input
+              type="text"
+              class="form-control"
+              placeholder="t.ex. Tech AB"
+            />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Plats</label>
+            <input
+              type="text"
+              class="form-control"
+              placeholder="t.ex. Stockholm"
+            />
+          </div>
+          <div class="col-md-3 mb-3">
+            <label class="form-label">Startdatum</label>
+            <input type="month" class="form-control" />
+          </div>
+          <div class="col-md-3 mb-3">
+            <label class="form-label">Slutdatum</label>
+            <input type="month" class="form-control" placeholder="Pågående" />
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Beskrivning (en punkt per rad)</label>
+          <textarea
+            class="form-control"
+            rows="3"
+            placeholder="• Utvecklade nya funktioner&#10;• Ledde team på 5 personer&#10;• Förbättrade prestanda med 30%"
+          ></textarea>
+        </div>
+      </div>
+    </template>
+
+    <template id="educationTemplate">
+      <div class="item-card">
+        <div class="item-controls">
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-danger remove-item"
+          >
+            <i class="fas fa-trash"></i> Ta bort
+          </button>
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-secondary move-up"
+          >
+            <i class="fas fa-arrow-up"></i>
+          </button>
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-secondary move-down"
+          >
+            <i class="fas fa-arrow-down"></i>
+          </button>
+        </div>
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Utbildning</label>
+            <input
+              type="text"
+              class="form-control"
+              placeholder="t.ex. Kandidatexamen i Datavetenskap"
+            />
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Skola/Universitet</label>
+            <input type="text" class="form-control" placeholder="t.ex. KTH" />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Plats</label>
+            <input
+              type="text"
+              class="form-control"
+              placeholder="t.ex. Stockholm"
+            />
+          </div>
+          <div class="col-md-3 mb-3">
+            <label class="form-label">Startdatum</label>
+            <input type="month" class="form-control" />
+          </div>
+          <div class="col-md-3 mb-3">
+            <label class="form-label">Slutdatum</label>
+            <input type="month" class="form-control" />
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Beskrivning (valfri)</label>
+          <textarea
+            class="form-control"
+            rows="2"
+            placeholder="• Relevant kurser&#10;• Examensarbete om AI"
+          ></textarea>
+        </div>
+      </div>
+    </template>
+
+    <template id="projectTemplate">
+      <div class="item-card">
+        <div class="item-controls">
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-danger remove-item"
+          >
+            <i class="fas fa-trash"></i> Ta bort
+          </button>
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-secondary move-up"
+          >
+            <i class="fas fa-arrow-up"></i>
+          </button>
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-secondary move-down"
+          >
+            <i class="fas fa-arrow-down"></i>
+          </button>
+        </div>
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Projektnamn</label>
+            <input
+              type="text"
+              class="form-control"
+              placeholder="t.ex. E-handelsplattform"
+            />
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Länk (valfri)</label>
+            <input
+              type="url"
+              class="form-control"
+              placeholder="https://projekt.com"
+            />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Teknologier</label>
+            <input
+              type="text"
+              class="form-control"
+              placeholder="t.ex. React, Node.js, MongoDB"
+            />
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Datum</label>
+            <input type="month" class="form-control" />
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Beskrivning</label>
+          <textarea
+            class="form-control"
+            rows="3"
+            placeholder="• Byggde fullstack e-handelsplattform&#10;• Hanterade 1000+ användare&#10;• Implementerade betalningssystem"
+          ></textarea>
+        </div>
+      </div>
+    </template>
+
+    <template id="skillTemplate">
+      <div class="item-card">
+        <div class="item-controls">
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-danger remove-item"
+          >
+            <i class="fas fa-trash"></i> Ta bort
+          </button>
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-secondary move-up"
+          >
+            <i class="fas fa-arrow-up"></i>
+          </button>
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-secondary move-down"
+          >
+            <i class="fas fa-arrow-down"></i>
+          </button>
+        </div>
+        <div class="row">
+          <div class="col-md-8 mb-3">
+            <label class="form-label">Färdighet</label>
+            <input
+              type="text"
+              class="form-control"
+              placeholder="t.ex. JavaScript"
+            />
+          </div>
+          <div class="col-md-4 mb-3">
+            <label class="form-label">Nivå</label>
+            <select class="form-select">
+              <option value="">Välj nivå</option>
+              <option value="Nybörjare">Nybörjare</option>
+              <option value="Grundläggande">Grundläggande</option>
+              <option value="Medel">Medel</option>
+              <option value="Avancerad">Avancerad</option>
+              <option value="Expert">Expert</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <template id="languageTemplate">
+      <div class="item-card">
+        <div class="item-controls">
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-danger remove-item"
+          >
+            <i class="fas fa-trash"></i> Ta bort
+          </button>
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-secondary move-up"
+          >
+            <i class="fas fa-arrow-up"></i>
+          </button>
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-secondary move-down"
+          >
+            <i class="fas fa-arrow-down"></i>
+          </button>
+        </div>
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Språk</label>
+            <input
+              type="text"
+              class="form-control"
+              placeholder="t.ex. Svenska"
+            />
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Nivå</label>
+            <select class="form-select">
+              <option value="">Välj nivå</option>
+              <option value="Modersmål">Modersmål</option>
+              <option value="Flytande">Flytande</option>
+              <option value="Avancerad">Avancerad</option>
+              <option value="Medel">Medel</option>
+              <option value="Grundläggande">Grundläggande</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <template id="linkTemplate">
+      <div class="item-card">
+        <div class="item-controls">
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-danger remove-item"
+          >
+            <i class="fas fa-trash"></i> Ta bort
+          </button>
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-secondary move-up"
+          >
+            <i class="fas fa-arrow-up"></i>
+          </button>
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-secondary move-down"
+          >
+            <i class="fas fa-arrow-down"></i>
+          </button>
+        </div>
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Titel</label>
+            <input
+              type="text"
+              class="form-control"
+              placeholder="t.ex. LinkedIn, GitHub"
+            />
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label">URL</label>
+            <input
+              type="url"
+              class="form-control"
+              placeholder="https://linkedin.com/in/namn"
+            />
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <!-- jQuery CDN -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <!-- Bootstrap 5 JS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+      // CV Builder Application
+      class CVBuilder {
+        constructor() {
+          this.data = {
+            personal: {
+              firstName: "",
+              lastName: "",
+              title: "",
+              location: "",
+              phone: "",
+              email: "",
+              profileImage: "",
+            },
+            summary: "",
+            experience: [],
+            education: [],
+            projects: [],
+            skills: [],
+            languages: [],
+            links: [],
+          };
+
+          this.init();
+        }
+
+        init() {
+          this.bindEvents();
+          this.updatePreview();
+        }
+
+        bindEvents() {
+          // Personal info inputs
+          $(
+            "#firstName, #lastName, #title, #location, #phone, #email, #summary"
+          ).on("input", () => {
+            this.updatePreview();
+          });
+
+          // Profile image
+          $("#profileImage").on("change", (e) => {
+            this.handleImageUpload(e);
+          });
+
+          // Remove image button
+          $("#removeImageBtn").on("click", () => {
+            this.removeImage();
+          });
+
+          // Add buttons
+          $("#addExperienceBtn").click(() => this.addItem("experience"));
+          $("#addEducationBtn").click(() => this.addItem("education"));
+          $("#addProjectBtn").click(() => this.addItem("projects"));
+          $("#addSkillBtn").click(() => this.addItem("skills"));
+          $("#addLanguageBtn").click(() => this.addItem("languages"));
+          $("#addLinkBtn").click(() => this.addItem("links"));
+
+          // Action buttons
+          $("#newCvBtn").click(() => this.newCV());
+          $("#importBtn").click(() => $("#importFile").click());
+          $("#exportBtn").click(() => this.exportData());
+          $("#printBtn").click(() => window.print());
+
+          // Import file
+          $("#importFile").on("change", (e) => {
+            this.importData(e);
+          });
+
+          // Accent color picker
+          $("#accentColor").on("input", (e) => {
+            const color = e.target.value;
+            document.documentElement.style.setProperty("--accent-color", color);
+          });
+        }
+
+        // Removed updatePersonalInfo - no longer needed
+
+        handleImageUpload(e) {
+          const file = e.target.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+              this.data.personal.profileImage = event.target.result;
+              this.showImagePreview(event.target.result);
+              this.updatePreview();
+              this.saveToStorage();
+            };
+            reader.readAsDataURL(file);
+          }
+        }
+
+        removeImage() {
+          this.data.personal.profileImage = "";
+          $("#profileImage").val("");
+          $("#imagePreview").hide();
+          this.updatePreview();
+          this.saveToStorage();
+        }
+
+        showImagePreview(imageSrc) {
+          $("#previewImg").attr("src", imageSrc);
+          $("#imagePreview").show();
+        }
+
+        addItem(type) {
+          // Map plural types to singular template names
+          const templateMap = {
+            skills: "skill",
+            languages: "language",
+            links: "link",
+            experience: "experience",
+            education: "education",
+            projects: "project",
+          };
+
+          const templateName = templateMap[type] || type;
+          const template = document.getElementById(templateName + "Template");
+          if (!template) {
+            console.error("Template not found:", templateName + "Template");
+            return;
+          }
+          const clone = template.content.cloneNode(true);
+
+          // Bind events to the new item
+          $(clone)
+            .find(".remove-item")
+            .click((e) => {
+              $(e.target).closest(".item-card").remove();
+              this.updatePreview();
+            });
+
+          $(clone)
+            .find(".move-up")
+            .click((e) => {
+              const item = $(e.target).closest(".item-card");
+              const prev = item.prev();
+              if (prev.length) {
+                item.insertBefore(prev);
+                this.updatePreview();
+              }
+            });
+
+          $(clone)
+            .find(".move-down")
+            .click((e) => {
+              const item = $(e.target).closest(".item-card");
+              const next = item.next();
+              if (next.length) {
+                item.insertAfter(next);
+                this.updatePreview();
+              }
+            });
+
+          // Bind input events
+          $(clone)
+            .find("input, textarea, select")
+            .on("input change", () => {
+              this.updatePreview();
+            });
+
+          $("#" + type + "List").append(clone);
+          // Don't save immediately when adding empty items
+          this.updatePreview();
+        }
+
+        updatePreview() {
+          const preview = $("#cvPreview");
+          let html = "";
+
+          // Header
+          const firstName = $("#firstName").val();
+          const lastName = $("#lastName").val();
+          const name = `${firstName} ${lastName}`.trim();
+          if (name) {
+            const title = $("#title").val();
+            const phone = $("#phone").val();
+            const email = $("#email").val();
+            const location = $("#location").val();
+            const profileImage = this.data.personal.profileImage; // Keep this from data for now
+
+            html += `
+                        <div class="cv-header">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <h1 class="cv-name">${name}</h1>
+                                    ${
+                                      title
+                                        ? `<div class="cv-title">${title}</div>`
+                                        : ""
+                                    }
+                                    <div class="cv-contact">
+                                        ${
+                                          phone
+                                            ? `<span><i class="fas fa-phone"></i> ${phone}</span>`
+                                            : ""
+                                        }
+                                        ${
+                                          email
+                                            ? `<span><i class="fas fa-envelope"></i> <a href="mailto:${email}">${email}</a></span>`
+                                            : ""
+                                        }
+                                        ${
+                                          location
+                                            ? `<span><i class="fas fa-map-marker-alt"></i> ${location}</span>`
+                                            : ""
+                                        }
+                                    </div>
+                                </div>
+                                ${
+                                  profileImage
+                                    ? `
+                                    <div class="col-md-4 profile-image-container">
+                                        <img src="${profileImage}" alt="Profilbild" class="profile-image">
+                                    </div>
+                                `
+                                    : ""
+                                }
+                            </div>
+                        </div>
+                    `;
+          }
+
+          // Summary
+          const summary = $("#summary").val();
+          if (summary) {
+            html += `
+                        <div class="cv-section">
+                            <h2><i class="fas fa-user-circle"></i> Sammanfattning</h2>
+                            <div class="cv-item-description">${summary.replace(
+                              /\n/g,
+                              "<br>"
+                            )}</div>
+                        </div>
+                    `;
+          }
+
+          // Experience - Read directly from DOM
+          const experienceItems = $("#experienceList .item-card");
+          if (experienceItems.length > 0) {
+            html +=
+              '<div class="cv-section"><h2><i class="fas fa-briefcase"></i> Erfarenhet</h2>';
+            experienceItems.each((index, element) => {
+              const $el = $(element);
+              const title = $el.find('input[placeholder*="Senior"]').val();
+              const company = $el.find('input[placeholder*="Tech AB"]').val();
+              const location = $el
+                .find('input[placeholder*="Stockholm"]')
+                .val();
+              const startDate = $el.find('input[type="month"]').eq(0).val();
+              const endDate = $el.find('input[type="month"]').eq(1).val();
+              const description = $el.find("textarea").val();
+
+              if (title || company) {
+                html += `
+                                <div class="cv-item">
+                                    <div class="cv-item-title">${
+                                      title || ""
+                                    }</div>
+                                    <div class="cv-item-meta">
+                                        ${company ? company : ""}${
+                  location ? ` | ${location}` : ""
+                }${
+                  startDate || endDate
+                    ? ` | ${this.formatDateRange(startDate, endDate)}`
+                    : ""
+                }
+                                    </div>
+                                    ${
+                                      description
+                                        ? `<div class="cv-item-description">${this.formatDescription(
+                                            description
+                                          )}</div>`
+                                        : ""
+                                    }
+                                </div>
+                            `;
+              }
+            });
+            html += "</div>";
+          }
+
+          // Education - Read directly from DOM
+          const educationItems = $("#educationList .item-card");
+          if (educationItems.length > 0) {
+            html +=
+              '<div class="cv-section"><h2><i class="fas fa-graduation-cap"></i> Utbildning</h2>';
+            educationItems.each((index, element) => {
+              const $el = $(element);
+              const degree = $el
+                .find('input[placeholder*="Kandidatexamen"]')
+                .val();
+              const school = $el.find('input[placeholder*="KTH"]').val();
+              const location = $el
+                .find('input[placeholder*="Stockholm"]')
+                .val();
+              const startDate = $el.find('input[type="month"]').eq(0).val();
+              const endDate = $el.find('input[type="month"]').eq(1).val();
+              const description = $el.find("textarea").val();
+
+              if (degree || school) {
+                html += `
+                                <div class="cv-item">
+                                    <div class="cv-item-title">${
+                                      degree || ""
+                                    }</div>
+                                    <div class="cv-item-meta">
+                                        ${school ? school : ""}${
+                  location ? ` | ${location}` : ""
+                }${
+                  startDate || endDate
+                    ? ` | ${this.formatDateRange(startDate, endDate)}`
+                    : ""
+                }
+                                    </div>
+                                    ${
+                                      description
+                                        ? `<div class="cv-item-description">${this.formatDescription(
+                                            description
+                                          )}</div>`
+                                        : ""
+                                    }
+                                </div>
+                            `;
+              }
+            });
+            html += "</div>";
+          }
+
+          // Projects - Read directly from DOM
+          const projectItems = $("#projectList .item-card");
+          if (projectItems.length > 0) {
+            html +=
+              '<div class="cv-section"><h2><i class="fas fa-project-diagram"></i> Projekt</h2>';
+            projectItems.each((index, element) => {
+              const $el = $(element);
+              const name = $el
+                .find('input[placeholder*="E-handelsplattform"]')
+                .val();
+              const link = $el.find('input[type="url"]').eq(0).val();
+              const technologies = $el
+                .find('input[placeholder*="React, Node.js"]')
+                .val();
+              const date = $el.find('input[type="month"]').val();
+              const description = $el.find("textarea").val();
+
+              if (name) {
+                html += `
+                                 <div class="cv-item">
+                                     <div class="cv-item-title">
+                                         ${
+                                           link
+                                             ? `<a href="${link}" target="_blank">${name}</a>`
+                                             : name
+                                         }
+                                     </div>
+                                     <div class="cv-item-meta">
+                                         ${technologies ? technologies : ""}${
+                  date ? ` | ${this.formatDate(date)}` : ""
+                }
+                                     </div>
+                                     ${
+                                       description
+                                         ? `<div class="cv-item-description">${this.formatDescription(
+                                             description
+                                           )}</div>`
+                                         : ""
+                                     }
+                                 </div>
+                             `;
+              }
+            });
+            html += "</div>";
+          }
+
+          // Skills - Read directly from DOM
+          const skillItems = $("#skillsList .item-card");
+          if (skillItems.length > 0) {
+            html +=
+              '<div class="cv-section"><h2><i class="fas fa-tools"></i> Färdigheter</h2><div class="skills-tags">';
+            skillItems.each((index, element) => {
+              const $el = $(element);
+              const skill = $el.find('input[placeholder*="JavaScript"]').val();
+              const level = $el.find("select").val();
+
+              if (skill) {
+                const levelText = level ? ` (${level})` : "";
+                html += `<span class="skill-tag">${skill}${levelText}</span>`;
+              }
+            });
+            html += "</div></div>";
+          }
+
+          // Languages - Read directly from DOM
+          const languageItems = $("#languagesList .item-card");
+          if (languageItems.length > 0) {
+            html +=
+              '<div class="cv-section"><h2><i class="fas fa-language"></i> Språk</h2>';
+            languageItems.each((index, element) => {
+              const $el = $(element);
+              const language = $el.find('input[placeholder*="Svenska"]').val();
+              const level = $el.find("select").val();
+
+              if (language) {
+                html += `
+                                 <div class="cv-item">
+                                     <div class="cv-item-title">${language}</div>
+                                     ${
+                                       level
+                                         ? `<div class="cv-item-meta">${level}</div>`
+                                         : ""
+                                     }
+                                 </div>
+                             `;
+              }
+            });
+            html += "</div>";
+          }
+
+          // Links - Read directly from DOM
+          const linkItems = $("#linksList .item-card");
+          if (linkItems.length > 0) {
+            html +=
+              '<div class="cv-section"><h2><i class="fas fa-link"></i> Länkar & Certifikat</h2>';
+            linkItems.each((index, element) => {
+              const $el = $(element);
+              const title = $el.find('input[placeholder*="LinkedIn"]').val();
+              const url = $el.find('input[type="url"]').val();
+
+              if (title && url) {
+                html += `
+                                 <div class="cv-item">
+                                     <div class="cv-item-title">
+                                         <a href="${url}" target="_blank">${title}</a>
+                                     </div>
+                                 </div>
+                             `;
+              }
+            });
+            html += "</div>";
+          }
+
+          preview.html(html);
+        }
+
+        getSectionData(section) {
+          return $(`#${section}List .item-card`)
+            .map(function () {
+              return $(this);
+            })
+            .get();
+        }
+
+        formatDateRange(start, end) {
+          if (!start && !end) return "";
+          const startFormatted = start ? this.formatDate(start) : "";
+          const endFormatted = end ? this.formatDate(end) : "Pågående";
+          return `${startFormatted} - ${endFormatted}`;
+        }
+
+        formatDate(dateString) {
+          if (!dateString) return "";
+          const date = new Date(dateString + "-01");
+          return date.toLocaleDateString("sv-SE", {
+            year: "numeric",
+            month: "long",
+          });
+        }
+
+        formatDescription(text) {
+          if (!text) return "";
+          return text
+            .split("\n")
+            .map((line) => {
+              line = line.trim();
+              if (line.startsWith("•") || line.startsWith("-")) {
+                return `<li>${line.substring(1).trim()}</li>`;
+              }
+              return line;
+            })
+            .join("\n")
+            .replace(/\n/g, "<br>")
+            .replace(/<li>.*<\/li>/g, (match) => {
+              return `<ul>${match}</ul>`;
+            })
+            .replace(/<\/ul><br><ul>/g, "");
+        }
+
+        // Collect all form data for export
+        collectFormData() {
+          const data = {
+            personal: {
+              firstName: $("#firstName").val(),
+              lastName: $("#lastName").val(),
+              title: $("#title").val(),
+              location: $("#location").val(),
+              phone: $("#phone").val(),
+              email: $("#email").val(),
+              profileImage: this.data.personal.profileImage,
+            },
+            summary: $("#summary").val(),
+            accentColor: $("#accentColor").val(),
+            experience: [],
+            education: [],
+            projects: [],
+            skills: [],
+            languages: [],
+            links: [],
+          };
+
+          // Collect experience
+          $("#experienceList .item-card").each((index, element) => {
+            const $el = $(element);
+            const expData = {
+              title: $el.find('input[placeholder*="Senior"]').val(),
+              company: $el.find('input[placeholder*="Tech AB"]').val(),
+              location: $el.find('input[placeholder*="Stockholm"]').val(),
+              startDate: $el.find('input[type="month"]').eq(0).val(),
+              endDate: $el.find('input[type="month"]').eq(1).val(),
+              description: $el.find("textarea").val(),
+            };
+            if (expData.title || expData.company || expData.description) {
+              data.experience.push(expData);
+            }
+          });
+
+          // Collect education
+          $("#educationList .item-card").each((index, element) => {
+            const $el = $(element);
+            const eduData = {
+              degree: $el.find('input[placeholder*="Kandidatexamen"]').val(),
+              school: $el.find('input[placeholder*="KTH"]').val(),
+              location: $el.find('input[placeholder*="Stockholm"]').val(),
+              startDate: $el.find('input[type="month"]').eq(0).val(),
+              endDate: $el.find('input[type="month"]').eq(1).val(),
+              description: $el.find("textarea").val(),
+            };
+            if (eduData.degree || eduData.school || eduData.description) {
+              data.education.push(eduData);
+            }
+          });
+
+          // Collect projects
+          $("#projectList .item-card").each((index, element) => {
+            const $el = $(element);
+            const projData = {
+              name: $el.find('input[placeholder*="E-handelsplattform"]').val(),
+              link: $el.find('input[type="url"]').eq(0).val(),
+              technologies: $el
+                .find('input[placeholder*="React, Node.js"]')
+                .val(),
+              date: $el.find('input[type="month"]').val(),
+              description: $el.find("textarea").val(),
+            };
+            if (projData.name || projData.description) {
+              data.projects.push(projData);
+            }
+          });
+
+          // Collect skills
+          $("#skillsList .item-card").each((index, element) => {
+            const $el = $(element);
+            const skillData = {
+              skill: $el.find('input[placeholder*="JavaScript"]').val(),
+              level: $el.find("select").val(),
+            };
+            if (skillData.skill) {
+              data.skills.push(skillData);
+            }
+          });
+
+          // Collect languages
+          $("#languagesList .item-card").each((index, element) => {
+            const $el = $(element);
+            const langData = {
+              language: $el.find('input[placeholder*="Svenska"]').val(),
+              level: $el.find("select").val(),
+            };
+            if (langData.language) {
+              data.languages.push(langData);
+            }
+          });
+
+          // Collect links
+          $("#linksList .item-card").each((index, element) => {
+            const $el = $(element);
+            const linkData = {
+              title: $el.find('input[placeholder*="LinkedIn"]').val(),
+              url: $el.find('input[type="url"]').val(),
+            };
+            if (linkData.title && linkData.url) {
+              data.links.push(linkData);
+            }
+          });
+
+          return data;
+        }
+
+        // Load data from JSON
+        loadFromJSON(data) {
+          // Clear all existing data
+          $("input, textarea, select").val("");
+          $(".item-card").remove();
+          $("#imagePreview").hide();
+
+          // Load personal info
+          $("#firstName").val(data.personal.firstName || "");
+          $("#lastName").val(data.personal.lastName || "");
+          $("#title").val(data.personal.title || "");
+          $("#location").val(data.personal.location || "");
+          $("#phone").val(data.personal.phone || "");
+          $("#email").val(data.personal.email || "");
+          $("#summary").val(data.summary || "");
+
+          // Load accent color
+          if (data.accentColor) {
+            $("#accentColor").val(data.accentColor);
+            document.documentElement.style.setProperty(
+              "--accent-color",
+              data.accentColor
+            );
+          }
+
+          // Load profile image
+          if (data.personal.profileImage) {
+            this.data.personal.profileImage = data.personal.profileImage;
+            this.showImagePreview(data.personal.profileImage);
+          }
+
+          // Load experience
+          if (data.experience && data.experience.length > 0) {
+            data.experience.forEach((exp) => {
+              this.addItem("experience");
+              const $el = $("#experienceList .item-card").last();
+              $el.find('input[placeholder*="Senior"]').val(exp.title || "");
+              $el.find('input[placeholder*="Tech AB"]').val(exp.company || "");
+              $el
+                .find('input[placeholder*="Stockholm"]')
+                .val(exp.location || "");
+              $el
+                .find('input[type="month"]')
+                .eq(0)
+                .val(exp.startDate || "");
+              $el
+                .find('input[type="month"]')
+                .eq(1)
+                .val(exp.endDate || "");
+              $el.find("textarea").val(exp.description || "");
+            });
+          }
+
+          // Load education
+          if (data.education && data.education.length > 0) {
+            data.education.forEach((edu) => {
+              this.addItem("education");
+              const $el = $("#educationList .item-card").last();
+              $el
+                .find('input[placeholder*="Kandidatexamen"]')
+                .val(edu.degree || "");
+              $el.find('input[placeholder*="KTH"]').val(edu.school || "");
+              $el
+                .find('input[placeholder*="Stockholm"]')
+                .val(edu.location || "");
+              $el
+                .find('input[type="month"]')
+                .eq(0)
+                .val(edu.startDate || "");
+              $el
+                .find('input[type="month"]')
+                .eq(1)
+                .val(edu.endDate || "");
+              $el.find("textarea").val(edu.description || "");
+            });
+          }
+
+          // Load projects
+          if (data.projects && data.projects.length > 0) {
+            data.projects.forEach((proj) => {
+              this.addItem("projects");
+              const $el = $("#projectList .item-card").last();
+              $el
+                .find('input[placeholder*="E-handelsplattform"]')
+                .val(proj.name || "");
+              $el
+                .find('input[type="url"]')
+                .eq(0)
+                .val(proj.link || "");
+              $el
+                .find('input[placeholder*="React, Node.js"]')
+                .val(proj.technologies || "");
+              $el.find('input[type="month"]').val(proj.date || "");
+              $el.find("textarea").val(proj.description || "");
+            });
+          }
+
+          // Load skills
+          if (data.skills && data.skills.length > 0) {
+            data.skills.forEach((skill) => {
+              this.addItem("skills");
+              const $el = $("#skillsList .item-card").last();
+              $el
+                .find('input[placeholder*="JavaScript"]')
+                .val(skill.skill || "");
+              $el.find("select").val(skill.level || "");
+            });
+          }
+
+          // Load languages
+          if (data.languages && data.languages.length > 0) {
+            data.languages.forEach((lang) => {
+              this.addItem("languages");
+              const $el = $("#languagesList .item-card").last();
+              $el
+                .find('input[placeholder*="Svenska"]')
+                .val(lang.language || "");
+              $el.find("select").val(lang.level || "");
+            });
+          }
+
+          // Load links
+          if (data.links && data.links.length > 0) {
+            data.links.forEach((link) => {
+              this.addItem("links");
+              const $el = $("#linksList .item-card").last();
+              $el.find('input[placeholder*="LinkedIn"]').val(link.title || "");
+              $el.find('input[type="url"]').val(link.url || "");
+            });
+          }
+
+          this.updatePreview();
+        }
+
+        newCV() {
+          if (
+            confirm(
+              "Är du säker på att du vill skapa ett nytt CV? Alla data kommer att raderas."
+            )
+          ) {
+            // Clear form
+            $("input, textarea, select").val("");
+            $(".item-card").remove();
+            $("#profileImage").val("");
+            $("#imagePreview").hide();
+            this.data.personal.profileImage = "";
+
+            this.updatePreview();
+          }
+        }
+
+        exportData() {
+          const data = this.collectFormData();
+          const dataStr = JSON.stringify(data, null, 2);
+          const dataBlob = new Blob([dataStr], { type: "application/json" });
+
+          const link = document.createElement("a");
+          link.href = URL.createObjectURL(dataBlob);
+          link.download = "cv-data.json";
+          link.click();
+        }
+
+        importData(e) {
+          const file = e.target.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+              try {
+                const importedData = JSON.parse(event.target.result);
+                this.loadFromJSON(importedData);
+                alert("CV-data importerad framgångsrikt!");
+              } catch (error) {
+                alert(
+                  "Fel vid import av JSON-fil. Kontrollera att filen är giltig."
+                );
+              }
+            };
+            reader.readAsText(file);
+          }
+        }
+
+        // Removed dummy data loading
+      }
+
+      // Initialize the CV Builder when the page loads
+      $(document).ready(() => {
+        new CVBuilder();
+      });
+    </script>
+  </body>
+</html>
