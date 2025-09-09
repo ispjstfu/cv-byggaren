@@ -20,10 +20,19 @@
     <!-- SortableJS CDN -->
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 
+    <!-- Google Fonts CDN -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&family=Open+Sans:wght@300;400;600;700&family=Lato:wght@300;400;700&family=Montserrat:wght@300;400;500;600;700&family=Source+Sans+Pro:wght@300;400;600;700&family=Poppins:wght@300;400;500;600;700&family=Nunito:wght@300;400;600;700&family=Playfair+Display:wght@400;500;600;700&family=Merriweather:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
+
     <style>
-      /* CSS Variables for accent color */
+      /* CSS Variables for accent color and font */
       :root {
         --accent-color: #007bff;
+        --cv-font-family: "Inter", sans-serif;
       }
 
       /* Custom styles for CV builder */
@@ -32,6 +41,7 @@
         min-height: 100vh;
         padding: 2rem;
         box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        font-family: var(--cv-font-family);
       }
 
       .form-section {
@@ -88,6 +98,24 @@
 
       .sortable-container {
         min-height: 100px;
+      }
+
+      /* Design section styles */
+      .design-section {
+        background: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 0.375rem;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .design-section h6 {
+        color: #495057;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
       }
 
       .item-card {
@@ -400,22 +428,67 @@
             <div class="sortable-container" id="sortable-sections">
               <h1 class="h3 mb-4">CV-byggaren</h1>
 
-              <!-- Color Picker -->
-              <div class="mb-4">
-                <label for="accentColor" class="form-label">
-                  <i class="fas fa-palette"></i> Accentfärg
-                </label>
-                <div class="d-flex gap-2 align-items-center">
-                  <input
-                    type="color"
-                    class="form-control form-control-color"
-                    id="accentColor"
-                    value="#007bff"
-                    title="Välj accentfärg"
-                  />
-                  <span class="text-muted small"
-                    >Välj färg för länkar, ikoner och streck</span
-                  >
+              <!-- Design Section -->
+              <div class="design-section">
+                <h6>
+                  <i class="fas fa-paint-brush"></i>
+                  Design & Styling
+                </h6>
+
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="accentColor" class="form-label">
+                      <i class="fas fa-palette"></i> Accentfärg
+                    </label>
+                    <div class="d-flex gap-2 align-items-center">
+                      <input
+                        type="color"
+                        class="form-control form-control-color"
+                        id="accentColor"
+                        value="#007bff"
+                        title="Välj accentfärg"
+                      />
+                      <span class="text-muted small"
+                        >Färg för länkar och ikoner</span
+                      >
+                    </div>
+                  </div>
+
+                  <div class="col-md-6 mb-3">
+                    <label for="fontFamily" class="form-label">
+                      <i class="fas fa-font"></i> Typsnitt
+                    </label>
+                    <select class="form-select" id="fontFamily">
+                      <option value="'Inter', sans-serif" selected>
+                        Inter (Modern)
+                      </option>
+                      <option value="'Roboto', sans-serif">
+                        Roboto (Clean)
+                      </option>
+                      <option value="'Open Sans', sans-serif">
+                        Open Sans (Friendly)
+                      </option>
+                      <option value="'Lato', sans-serif">Lato (Elegant)</option>
+                      <option value="'Montserrat', sans-serif">
+                        Montserrat (Bold)
+                      </option>
+                      <option value="'Source Sans Pro', sans-serif">
+                        Source Sans Pro (Professional)
+                      </option>
+                      <option value="'Poppins', sans-serif">
+                        Poppins (Rounded)
+                      </option>
+                      <option value="'Nunito', sans-serif">
+                        Nunito (Soft)
+                      </option>
+                      <option value="'Playfair Display', serif">
+                        Playfair Display (Elegant Serif)
+                      </option>
+                      <option value="'Merriweather', serif">
+                        Merriweather (Readable Serif)
+                      </option>
+                    </select>
+                  </div>
                 </div>
               </div>
 
@@ -530,8 +603,9 @@
                       src=""
                       alt="Förhandsvisning"
                       style="
-                        max-width: 100px;
-                        max-height: 100px;
+                        width: 100px;
+                        height: 100px;
+                        object-fit: cover;
                         border-radius: 50%;
                         border: 2px solid var(--accent-color);
                       "
@@ -1053,6 +1127,16 @@
               email: "",
               profileImage: "",
             },
+            sectionOrder: [
+              "personal",
+              "summary",
+              "experience",
+              "education",
+              "projects",
+              "skills",
+              "languages",
+              "links",
+            ],
             summary: "",
             experience: [],
             education: [],
@@ -1075,6 +1159,22 @@
           $(
             "#firstName, #lastName, #title, #location, #phone, #email, #summary"
           ).on("input", () => {
+            this.updatePreview();
+          });
+
+          // Design controls
+          $("#accentColor").on("change", (e) => {
+            const color = e.target.value;
+            document.documentElement.style.setProperty("--accent-color", color);
+            this.updatePreview();
+          });
+
+          $("#fontFamily").on("change", (e) => {
+            const fontFamily = e.target.value;
+            document.documentElement.style.setProperty(
+              "--cv-font-family",
+              fontFamily
+            );
             this.updatePreview();
           });
 
@@ -1141,6 +1241,80 @@
         showImagePreview(imageSrc) {
           $("#previewImg").attr("src", imageSrc);
           $("#imagePreview").show();
+        }
+
+        saveSectionOrder() {
+          const sections = $("#sortable-sections .form-section");
+          const sectionOrder = [];
+
+          sections.each((index, section) => {
+            const $section = $(section);
+            // Get section identifier based on content
+            if ($section.find("#firstName").length > 0) {
+              sectionOrder.push("personal");
+            } else if ($section.find("#summary").length > 0) {
+              sectionOrder.push("summary");
+            } else if ($section.find("#experienceList").length > 0) {
+              sectionOrder.push("experience");
+            } else if ($section.find("#educationList").length > 0) {
+              sectionOrder.push("education");
+            } else if ($section.find("#projectList").length > 0) {
+              sectionOrder.push("projects");
+            } else if ($section.find("#skillsList").length > 0) {
+              sectionOrder.push("skills");
+            } else if ($section.find("#languagesList").length > 0) {
+              sectionOrder.push("languages");
+            } else if ($section.find("#linksList").length > 0) {
+              sectionOrder.push("links");
+            }
+          });
+
+          this.data.sectionOrder = sectionOrder;
+          this.saveToStorage();
+        }
+
+        restoreSectionOrder(sectionOrder) {
+          const container = $("#sortable-sections");
+          const sections = container.find(".form-section");
+
+          // Create a map of section identifiers to elements
+          const sectionMap = {};
+          sections.each((index, section) => {
+            const $section = $(section);
+            let identifier = "";
+
+            if ($section.find("#firstName").length > 0) {
+              identifier = "personal";
+            } else if ($section.find("#summary").length > 0) {
+              identifier = "summary";
+            } else if ($section.find("#experienceList").length > 0) {
+              identifier = "experience";
+            } else if ($section.find("#educationList").length > 0) {
+              identifier = "education";
+            } else if ($section.find("#projectList").length > 0) {
+              identifier = "projects";
+            } else if ($section.find("#skillsList").length > 0) {
+              identifier = "skills";
+            } else if ($section.find("#languagesList").length > 0) {
+              identifier = "languages";
+            } else if ($section.find("#linksList").length > 0) {
+              identifier = "links";
+            }
+
+            if (identifier) {
+              sectionMap[identifier] = $section;
+            }
+          });
+
+          // Reorder sections according to the saved order
+          sectionOrder.forEach((identifier) => {
+            if (sectionMap[identifier]) {
+              container.append(sectionMap[identifier]);
+            }
+          });
+
+          // Update the data
+          this.data.sectionOrder = sectionOrder;
         }
 
         addItem(type) {
@@ -1571,6 +1745,17 @@
             },
             summary: $("#summary").val(),
             accentColor: $("#accentColor").val(),
+            fontFamily: $("#fontFamily").val(),
+            sectionOrder: this.data.sectionOrder || [
+              "personal",
+              "summary",
+              "experience",
+              "education",
+              "projects",
+              "skills",
+              "languages",
+              "links",
+            ],
             experience: [],
             education: [],
             projects: [],
@@ -1690,6 +1875,19 @@
               "--accent-color",
               data.accentColor
             );
+          }
+
+          // Load font family
+          const fontFamily = data.fontFamily || "'Inter', sans-serif";
+          $("#fontFamily").val(fontFamily);
+          document.documentElement.style.setProperty(
+            "--cv-font-family",
+            fontFamily
+          );
+
+          // Load section order
+          if (data.sectionOrder && data.sectionOrder.length > 0) {
+            this.restoreSectionOrder(data.sectionOrder);
           }
 
           // Load profile image
@@ -1868,6 +2066,7 @@
               // Update CV preview when sections are reordered
               if (window.cvBuilder) {
                 window.cvBuilder.updatePreview();
+                window.cvBuilder.saveSectionOrder();
               }
             },
           }
