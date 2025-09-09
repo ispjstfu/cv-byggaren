@@ -17,6 +17,9 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
 
+    <!-- SortableJS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+
     <style>
       /* CSS Variables for accent color */
       :root {
@@ -41,6 +44,50 @@
         border-left: 4px solid var(--accent-color);
         margin-bottom: 1rem;
         font-weight: 600;
+        cursor: move;
+        user-select: none;
+        transition: all 0.2s ease;
+      }
+
+      .section-header:hover {
+        background: #e9ecef;
+        transform: translateX(2px);
+      }
+
+      .personal-info-section .section-header {
+        cursor: default;
+      }
+
+      .personal-info-section .section-header:hover {
+        transform: none;
+      }
+
+      .section-header .drag-handle {
+        margin-right: 0.5rem;
+        color: #6c757d;
+        cursor: grab;
+      }
+
+      .section-header .drag-handle:active {
+        cursor: grabbing;
+      }
+
+      .form-section {
+        transition: all 0.3s ease;
+      }
+
+      .form-section.sortable-ghost {
+        opacity: 0.4;
+        transform: rotate(2deg);
+      }
+
+      .form-section.sortable-chosen {
+        transform: scale(1.02);
+        box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+      }
+
+      .sortable-container {
+        min-height: 100px;
       }
 
       .item-card {
@@ -350,272 +397,296 @@
         <!-- Form Panel -->
         <div class="col-md-6 form-container">
           <div class="p-3">
-            <h1 class="h3 mb-4">CV-byggaren</h1>
+            <div class="sortable-container" id="sortable-sections">
+              <h1 class="h3 mb-4">CV-byggaren</h1>
 
-            <!-- Color Picker -->
-            <div class="mb-4">
-              <label for="accentColor" class="form-label">
-                <i class="fas fa-palette"></i> Accentfärg
-              </label>
-              <div class="d-flex gap-2 align-items-center">
-                <input
-                  type="color"
-                  class="form-control form-control-color"
-                  id="accentColor"
-                  value="#007bff"
-                  title="Välj accentfärg"
-                />
-                <span class="text-muted small"
-                  >Välj färg för länkar, ikoner och streck</span
+              <!-- Color Picker -->
+              <div class="mb-4">
+                <label for="accentColor" class="form-label">
+                  <i class="fas fa-palette"></i> Accentfärg
+                </label>
+                <div class="d-flex gap-2 align-items-center">
+                  <input
+                    type="color"
+                    class="form-control form-control-color"
+                    id="accentColor"
+                    value="#007bff"
+                    title="Välj accentfärg"
+                  />
+                  <span class="text-muted small"
+                    >Välj färg för länkar, ikoner och streck</span
+                  >
+                </div>
+              </div>
+
+              <!-- Action Buttons -->
+              <div class="d-flex gap-2 mb-4 flex-wrap">
+                <button type="button" class="btn btn-primary" id="newCvBtn">
+                  <i class="fas fa-plus"></i> Nytt CV
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary"
+                  id="importBtn"
                 >
-              </div>
-            </div>
-
-            <!-- Action Buttons -->
-            <div class="d-flex gap-2 mb-4 flex-wrap">
-              <button type="button" class="btn btn-primary" id="newCvBtn">
-                <i class="fas fa-plus"></i> Nytt CV
-              </button>
-              <button
-                type="button"
-                class="btn btn-outline-secondary"
-                id="importBtn"
-              >
-                <i class="fas fa-upload"></i> Importera JSON
-              </button>
-              <button
-                type="button"
-                class="btn btn-outline-secondary"
-                id="exportBtn"
-              >
-                <i class="fas fa-download"></i> Exportera JSON
-              </button>
-              <button type="button" class="btn btn-success" id="printBtn">
-                <i class="fas fa-print"></i> Skriv ut / Spara som PDF
-              </button>
-            </div>
-
-            <!-- Hidden file input for import -->
-            <input
-              type="file"
-              id="importFile"
-              accept=".json"
-              style="display: none"
-            />
-
-            <!-- Personal Information -->
-            <div class="form-section">
-              <div class="section-header">Personuppgifter</div>
-              <div class="row">
-                <div class="col-md-6 mb-3">
-                  <label for="firstName" class="form-label">Förnamn *</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="firstName"
-                    placeholder="Ditt förnamn"
-                  />
-                </div>
-                <div class="col-md-6 mb-3">
-                  <label for="lastName" class="form-label">Efternamn *</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="lastName"
-                    placeholder="Ditt efternamn"
-                  />
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-md-6 mb-3">
-                  <label for="title" class="form-label">Titel/Roll</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="title"
-                    placeholder="t.ex. Utvecklare, Designer"
-                  />
-                </div>
-                <div class="col-md-6 mb-3">
-                  <label for="location" class="form-label">Plats</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="location"
-                    placeholder="t.ex. Stockholm, Sverige"
-                  />
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-md-6 mb-3">
-                  <label for="phone" class="form-label">Telefon</label>
-                  <input
-                    type="tel"
-                    class="form-control"
-                    id="phone"
-                    placeholder="+46 70 123 45 67"
-                  />
-                </div>
-                <div class="col-md-6 mb-3">
-                  <label for="email" class="form-label">E-post</label>
-                  <input
-                    type="email"
-                    class="form-control"
-                    id="email"
-                    placeholder="namn@email.com"
-                  />
-                </div>
-              </div>
-              <div class="mb-3">
-                <label for="profileImage" class="form-label"
-                  >Profilbild (valfri)</label
+                  <i class="fas fa-upload"></i> Importera JSON
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary"
+                  id="exportBtn"
                 >
-                <input
-                  type="file"
-                  class="form-control"
-                  id="profileImage"
-                  accept="image/*"
-                />
-                <div id="imagePreview" class="mt-2" style="display: none">
-                  <img
-                    id="previewImg"
-                    src=""
-                    alt="Förhandsvisning"
-                    style="
-                      max-width: 100px;
-                      max-height: 100px;
-                      border-radius: 50%;
-                      border: 2px solid var(--accent-color);
-                    "
+                  <i class="fas fa-download"></i> Exportera JSON
+                </button>
+                <button type="button" class="btn btn-success" id="printBtn">
+                  <i class="fas fa-print"></i> Skriv ut / Spara som PDF
+                </button>
+              </div>
+
+              <!-- Hidden file input for import -->
+              <input
+                type="file"
+                id="importFile"
+                accept=".json"
+                style="display: none"
+              />
+
+              <!-- Personal Information -->
+              <div class="form-section personal-info-section">
+                <div class="section-header">Personuppgifter</div>
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="firstName" class="form-label">Förnamn *</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="firstName"
+                      placeholder="Ditt förnamn"
+                    />
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label for="lastName" class="form-label">Efternamn *</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="lastName"
+                      placeholder="Ditt efternamn"
+                    />
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="title" class="form-label">Titel/Roll</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="title"
+                      placeholder="t.ex. Utvecklare, Designer"
+                    />
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label for="location" class="form-label">Plats</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="location"
+                      placeholder="t.ex. Stockholm, Sverige"
+                    />
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="phone" class="form-label">Telefon</label>
+                    <input
+                      type="tel"
+                      class="form-control"
+                      id="phone"
+                      placeholder="+46 70 123 45 67"
+                    />
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label for="email" class="form-label">E-post</label>
+                    <input
+                      type="email"
+                      class="form-control"
+                      id="email"
+                      placeholder="namn@email.com"
+                    />
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label for="profileImage" class="form-label"
+                    >Profilbild (valfri)</label
+                  >
+                  <input
+                    type="file"
+                    class="form-control"
+                    id="profileImage"
+                    accept="image/*"
                   />
+                  <div id="imagePreview" class="mt-2" style="display: none">
+                    <img
+                      id="previewImg"
+                      src=""
+                      alt="Förhandsvisning"
+                      style="
+                        max-width: 100px;
+                        max-height: 100px;
+                        border-radius: 50%;
+                        border: 2px solid var(--accent-color);
+                      "
+                    />
+                    <button
+                      type="button"
+                      class="btn btn-sm btn-outline-danger ms-2"
+                      id="removeImageBtn"
+                    >
+                      Ta bort bild
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Summary -->
+              <div class="form-section">
+                <div class="section-header">
+                  <i class="fas fa-grip-vertical drag-handle"></i>
+                  Sammanfattning
+                </div>
+                <div class="mb-3">
+                  <label for="summary" class="form-label"
+                    >Professionell sammanfattning</label
+                  >
+                  <textarea
+                    class="form-control"
+                    id="summary"
+                    rows="4"
+                    placeholder="Kort beskrivning av din professionella profil och nyckelkompetenser..."
+                  ></textarea>
+                </div>
+              </div>
+
+              <!-- Experience -->
+              <div class="form-section">
+                <div
+                  class="section-header d-flex justify-content-between align-items-center"
+                >
+                  <span>
+                    <i class="fas fa-grip-vertical drag-handle"></i>
+                    Erfarenhet
+                  </span>
                   <button
                     type="button"
-                    class="btn btn-sm btn-outline-danger ms-2"
-                    id="removeImageBtn"
+                    class="btn btn-sm btn-outline-primary"
+                    id="addExperienceBtn"
                   >
-                    Ta bort bild
+                    <i class="fas fa-plus"></i> Lägg till
                   </button>
                 </div>
+                <div id="experienceList"></div>
               </div>
-            </div>
 
-            <!-- Summary -->
-            <div class="form-section">
-              <div class="section-header">Sammanfattning</div>
-              <div class="mb-3">
-                <label for="summary" class="form-label"
-                  >Professionell sammanfattning</label
+              <!-- Education -->
+              <div class="form-section">
+                <div
+                  class="section-header d-flex justify-content-between align-items-center"
                 >
-                <textarea
-                  class="form-control"
-                  id="summary"
-                  rows="4"
-                  placeholder="Kort beskrivning av din professionella profil och nyckelkompetenser..."
-                ></textarea>
+                  <span>
+                    <i class="fas fa-grip-vertical drag-handle"></i>
+                    Utbildning
+                  </span>
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-outline-primary"
+                    id="addEducationBtn"
+                  >
+                    <i class="fas fa-plus"></i> Lägg till
+                  </button>
+                </div>
+                <div id="educationList"></div>
               </div>
-            </div>
 
-            <!-- Experience -->
-            <div class="form-section">
-              <div
-                class="section-header d-flex justify-content-between align-items-center"
-              >
-                <span>Erfarenhet</span>
-                <button
-                  type="button"
-                  class="btn btn-sm btn-outline-primary"
-                  id="addExperienceBtn"
+              <!-- Projects -->
+              <div class="form-section">
+                <div
+                  class="section-header d-flex justify-content-between align-items-center"
                 >
-                  <i class="fas fa-plus"></i> Lägg till
-                </button>
+                  <span>
+                    <i class="fas fa-grip-vertical drag-handle"></i>
+                    Projekt
+                  </span>
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-outline-primary"
+                    id="addProjectBtn"
+                  >
+                    <i class="fas fa-plus"></i> Lägg till
+                  </button>
+                </div>
+                <div id="projectList"></div>
               </div>
-              <div id="experienceList"></div>
-            </div>
 
-            <!-- Education -->
-            <div class="form-section">
-              <div
-                class="section-header d-flex justify-content-between align-items-center"
-              >
-                <span>Utbildning</span>
-                <button
-                  type="button"
-                  class="btn btn-sm btn-outline-primary"
-                  id="addEducationBtn"
+              <!-- Skills -->
+              <div class="form-section">
+                <div
+                  class="section-header d-flex justify-content-between align-items-center"
                 >
-                  <i class="fas fa-plus"></i> Lägg till
-                </button>
+                  <span>
+                    <i class="fas fa-grip-vertical drag-handle"></i>
+                    Färdigheter
+                  </span>
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-outline-primary"
+                    id="addSkillBtn"
+                  >
+                    <i class="fas fa-plus"></i> Lägg till
+                  </button>
+                </div>
+                <div id="skillsList"></div>
               </div>
-              <div id="educationList"></div>
-            </div>
 
-            <!-- Projects -->
-            <div class="form-section">
-              <div
-                class="section-header d-flex justify-content-between align-items-center"
-              >
-                <span>Projekt</span>
-                <button
-                  type="button"
-                  class="btn btn-sm btn-outline-primary"
-                  id="addProjectBtn"
+              <!-- Languages -->
+              <div class="form-section">
+                <div
+                  class="section-header d-flex justify-content-between align-items-center"
                 >
-                  <i class="fas fa-plus"></i> Lägg till
-                </button>
+                  <span>
+                    <i class="fas fa-grip-vertical drag-handle"></i>
+                    Språk
+                  </span>
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-outline-primary"
+                    id="addLanguageBtn"
+                  >
+                    <i class="fas fa-plus"></i> Lägg till
+                  </button>
+                </div>
+                <div id="languagesList"></div>
               </div>
-              <div id="projectList"></div>
-            </div>
 
-            <!-- Skills -->
-            <div class="form-section">
-              <div
-                class="section-header d-flex justify-content-between align-items-center"
-              >
-                <span>Färdigheter</span>
-                <button
-                  type="button"
-                  class="btn btn-sm btn-outline-primary"
-                  id="addSkillBtn"
+              <!-- Links -->
+              <div class="form-section">
+                <div
+                  class="section-header d-flex justify-content-between align-items-center"
                 >
-                  <i class="fas fa-plus"></i> Lägg till
-                </button>
+                  <span>
+                    <i class="fas fa-grip-vertical drag-handle"></i>
+                    Länkar & Certifikat
+                  </span>
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-outline-primary"
+                    id="addLinkBtn"
+                  >
+                    <i class="fas fa-plus"></i> Lägg till
+                  </button>
+                </div>
+                <div id="linksList"></div>
               </div>
-              <div id="skillsList"></div>
             </div>
-
-            <!-- Languages -->
-            <div class="form-section">
-              <div
-                class="section-header d-flex justify-content-between align-items-center"
-              >
-                <span>Språk</span>
-                <button
-                  type="button"
-                  class="btn btn-sm btn-outline-primary"
-                  id="addLanguageBtn"
-                >
-                  <i class="fas fa-plus"></i> Lägg till
-                </button>
-              </div>
-              <div id="languagesList"></div>
-            </div>
-
-            <!-- Links -->
-            <div class="form-section">
-              <div
-                class="section-header d-flex justify-content-between align-items-center"
-              >
-                <span>Länkar & Certifikat</span>
-                <button
-                  type="button"
-                  class="btn btn-sm btn-outline-primary"
-                  id="addLinkBtn"
-                >
-                  <i class="fas fa-plus"></i> Lägg till
-                </button>
-              </div>
-              <div id="linksList"></div>
-            </div>
+            <!-- End sortable-container -->
           </div>
         </div>
 
@@ -1190,224 +1261,255 @@
                     `;
           }
 
-          // Summary
-          const summary = $("#summary").val();
-          if (summary) {
-            html += `
-                        <div class="cv-section">
-                            <h2><i class="fas fa-user-circle"></i> Sammanfattning</h2>
-                            <div class="cv-item-description">${summary.replace(
-                              /\n/g,
-                              "<br>"
-                            )}</div>
+          // Generate sections in the order they appear in the DOM
+          const sections = $("#sortable-sections .form-section");
+          sections.each((index, section) => {
+            const $section = $(section);
+            const sectionId =
+              $section.attr("id") || $section.find('[id$="List"]').attr("id");
+
+            // Skip personal info section as it's handled in header
+            if ($section.find("#firstName").length > 0) {
+              return;
+            }
+
+            // Summary section
+            if ($section.find("#summary").length > 0) {
+              const summary = $("#summary").val();
+              if (summary) {
+                html += `
+                  <div class="cv-section">
+                    <h2><i class="fas fa-user-circle"></i> Sammanfattning</h2>
+                    <div class="cv-item-description">${summary.replace(
+                      /\n/g,
+                      "<br>"
+                    )}</div>
+                  </div>
+                `;
+              }
+            }
+
+            // Experience section
+            if ($section.find("#experienceList").length > 0) {
+              const experienceItems = $("#experienceList .item-card");
+              if (experienceItems.length > 0) {
+                html +=
+                  '<div class="cv-section"><h2><i class="fas fa-briefcase"></i> Erfarenhet</h2>';
+                experienceItems.each((index, element) => {
+                  const $el = $(element);
+                  const title = $el.find('input[placeholder*="Senior"]').val();
+                  const company = $el
+                    .find('input[placeholder*="Tech AB"]')
+                    .val();
+                  const location = $el
+                    .find('input[placeholder*="Stockholm"]')
+                    .val();
+                  const startDate = $el.find('input[type="month"]').eq(0).val();
+                  const endDate = $el.find('input[type="month"]').eq(1).val();
+                  const description = $el.find("textarea").val();
+
+                  if (title || company) {
+                    html += `
+                      <div class="cv-item">
+                        <div class="cv-item-title">${title || ""}</div>
+                        <div class="cv-item-meta">
+                          ${company ? company : ""}${
+                      location ? ` | ${location}` : ""
+                    }${
+                      startDate || endDate
+                        ? ` | ${this.formatDateRange(startDate, endDate)}`
+                        : ""
+                    }
                         </div>
+                        ${
+                          description
+                            ? `<div class="cv-item-description">${this.formatDescription(
+                                description
+                              )}</div>`
+                            : ""
+                        }
+                      </div>
                     `;
-          }
-
-          // Experience - Read directly from DOM
-          const experienceItems = $("#experienceList .item-card");
-          if (experienceItems.length > 0) {
-            html +=
-              '<div class="cv-section"><h2><i class="fas fa-briefcase"></i> Erfarenhet</h2>';
-            experienceItems.each((index, element) => {
-              const $el = $(element);
-              const title = $el.find('input[placeholder*="Senior"]').val();
-              const company = $el.find('input[placeholder*="Tech AB"]').val();
-              const location = $el
-                .find('input[placeholder*="Stockholm"]')
-                .val();
-              const startDate = $el.find('input[type="month"]').eq(0).val();
-              const endDate = $el.find('input[type="month"]').eq(1).val();
-              const description = $el.find("textarea").val();
-
-              if (title || company) {
-                html += `
-                                <div class="cv-item">
-                                    <div class="cv-item-title">${
-                                      title || ""
-                                    }</div>
-                                    <div class="cv-item-meta">
-                                        ${company ? company : ""}${
-                  location ? ` | ${location}` : ""
-                }${
-                  startDate || endDate
-                    ? ` | ${this.formatDateRange(startDate, endDate)}`
-                    : ""
-                }
-                                    </div>
-                                    ${
-                                      description
-                                        ? `<div class="cv-item-description">${this.formatDescription(
-                                            description
-                                          )}</div>`
-                                        : ""
-                                    }
-                                </div>
-                            `;
+                  }
+                });
+                html += "</div>";
               }
-            });
-            html += "</div>";
-          }
+            }
 
-          // Education - Read directly from DOM
-          const educationItems = $("#educationList .item-card");
-          if (educationItems.length > 0) {
-            html +=
-              '<div class="cv-section"><h2><i class="fas fa-graduation-cap"></i> Utbildning</h2>';
-            educationItems.each((index, element) => {
-              const $el = $(element);
-              const degree = $el
-                .find('input[placeholder*="Kandidatexamen"]')
-                .val();
-              const school = $el.find('input[placeholder*="KTH"]').val();
-              const location = $el
-                .find('input[placeholder*="Stockholm"]')
-                .val();
-              const startDate = $el.find('input[type="month"]').eq(0).val();
-              const endDate = $el.find('input[type="month"]').eq(1).val();
-              const description = $el.find("textarea").val();
+            // Education section
+            if ($section.find("#educationList").length > 0) {
+              const educationItems = $("#educationList .item-card");
+              if (educationItems.length > 0) {
+                html +=
+                  '<div class="cv-section"><h2><i class="fas fa-graduation-cap"></i> Utbildning</h2>';
+                educationItems.each((index, element) => {
+                  const $el = $(element);
+                  const degree = $el
+                    .find('input[placeholder*="Kandidatexamen"]')
+                    .val();
+                  const school = $el.find('input[placeholder*="KTH"]').val();
+                  const location = $el
+                    .find('input[placeholder*="Stockholm"]')
+                    .val();
+                  const startDate = $el.find('input[type="month"]').eq(0).val();
+                  const endDate = $el.find('input[type="month"]').eq(1).val();
+                  const description = $el.find("textarea").val();
 
-              if (degree || school) {
-                html += `
-                                <div class="cv-item">
-                                    <div class="cv-item-title">${
-                                      degree || ""
-                                    }</div>
-                                    <div class="cv-item-meta">
-                                        ${school ? school : ""}${
-                  location ? ` | ${location}` : ""
-                }${
-                  startDate || endDate
-                    ? ` | ${this.formatDateRange(startDate, endDate)}`
-                    : ""
-                }
-                                    </div>
-                                    ${
-                                      description
-                                        ? `<div class="cv-item-description">${this.formatDescription(
-                                            description
-                                          )}</div>`
-                                        : ""
-                                    }
-                                </div>
-                            `;
+                  if (degree || school) {
+                    html += `
+                      <div class="cv-item">
+                        <div class="cv-item-title">${degree || ""}</div>
+                        <div class="cv-item-meta">
+                          ${school ? school : ""}${
+                      location ? ` | ${location}` : ""
+                    }${
+                      startDate || endDate
+                        ? ` | ${this.formatDateRange(startDate, endDate)}`
+                        : ""
+                    }
+                        </div>
+                        ${
+                          description
+                            ? `<div class="cv-item-description">${this.formatDescription(
+                                description
+                              )}</div>`
+                            : ""
+                        }
+                      </div>
+                    `;
+                  }
+                });
+                html += "</div>";
               }
-            });
-            html += "</div>";
-          }
+            }
 
-          // Projects - Read directly from DOM
-          const projectItems = $("#projectList .item-card");
-          if (projectItems.length > 0) {
-            html +=
-              '<div class="cv-section"><h2><i class="fas fa-project-diagram"></i> Projekt</h2>';
-            projectItems.each((index, element) => {
-              const $el = $(element);
-              const name = $el
-                .find('input[placeholder*="E-handelsplattform"]')
-                .val();
-              const link = $el.find('input[type="url"]').eq(0).val();
-              const technologies = $el
-                .find('input[placeholder*="React, Node.js"]')
-                .val();
-              const date = $el.find('input[type="month"]').val();
-              const description = $el.find("textarea").val();
+            // Projects section
+            if ($section.find("#projectList").length > 0) {
+              const projectItems = $("#projectList .item-card");
+              if (projectItems.length > 0) {
+                html +=
+                  '<div class="cv-section"><h2><i class="fas fa-project-diagram"></i> Projekt</h2>';
+                projectItems.each((index, element) => {
+                  const $el = $(element);
+                  const name = $el
+                    .find('input[placeholder*="E-handelsplattform"]')
+                    .val();
+                  const link = $el.find('input[type="url"]').eq(0).val();
+                  const technologies = $el
+                    .find('input[placeholder*="React, Node.js"]')
+                    .val();
+                  const date = $el.find('input[type="month"]').val();
+                  const description = $el.find("textarea").val();
 
-              if (name) {
-                html += `
-                                 <div class="cv-item">
-                                     <div class="cv-item-title">
-                                         ${
-                                           link
-                                             ? `<a href="${link}" target="_blank">${name}</a>`
-                                             : name
-                                         }
-                                     </div>
-                                     <div class="cv-item-meta">
-                                         ${technologies ? technologies : ""}${
-                  date ? ` | ${this.formatDate(date)}` : ""
-                }
-                                     </div>
-                                     ${
-                                       description
-                                         ? `<div class="cv-item-description">${this.formatDescription(
-                                             description
-                                           )}</div>`
-                                         : ""
-                                     }
-                                 </div>
-                             `;
+                  if (name) {
+                    html += `
+                      <div class="cv-item">
+                        <div class="cv-item-title">
+                          ${
+                            link
+                              ? `<a href="${link}" target="_blank">${name}</a>`
+                              : name
+                          }
+                        </div>
+                        <div class="cv-item-meta">
+                          ${technologies ? technologies : ""}${
+                      date ? ` | ${this.formatDate(date)}` : ""
+                    }
+                        </div>
+                        ${
+                          description
+                            ? `<div class="cv-item-description">${this.formatDescription(
+                                description
+                              )}</div>`
+                            : ""
+                        }
+                      </div>
+                    `;
+                  }
+                });
+                html += "</div>";
               }
-            });
-            html += "</div>";
-          }
+            }
 
-          // Skills - Read directly from DOM
-          const skillItems = $("#skillsList .item-card");
-          if (skillItems.length > 0) {
-            html +=
-              '<div class="cv-section"><h2><i class="fas fa-tools"></i> Färdigheter</h2><div class="skills-tags">';
-            skillItems.each((index, element) => {
-              const $el = $(element);
-              const skill = $el.find('input[placeholder*="JavaScript"]').val();
-              const level = $el.find("select").val();
+            // Skills section
+            if ($section.find("#skillsList").length > 0) {
+              const skillItems = $("#skillsList .item-card");
+              if (skillItems.length > 0) {
+                html +=
+                  '<div class="cv-section"><h2><i class="fas fa-tools"></i> Färdigheter</h2><div class="skills-tags">';
+                skillItems.each((index, element) => {
+                  const $el = $(element);
+                  const skill = $el
+                    .find('input[placeholder*="JavaScript"]')
+                    .val();
+                  const level = $el.find("select").val();
 
-              if (skill) {
-                const levelText = level ? ` (${level})` : "";
-                html += `<span class="skill-tag">${skill}${levelText}</span>`;
+                  if (skill) {
+                    const levelText = level ? ` (${level})` : "";
+                    html += `<span class="skill-tag">${skill}${levelText}</span>`;
+                  }
+                });
+                html += "</div></div>";
               }
-            });
-            html += "</div></div>";
-          }
+            }
 
-          // Languages - Read directly from DOM
-          const languageItems = $("#languagesList .item-card");
-          if (languageItems.length > 0) {
-            html +=
-              '<div class="cv-section"><h2><i class="fas fa-language"></i> Språk</h2>';
-            languageItems.each((index, element) => {
-              const $el = $(element);
-              const language = $el.find('input[placeholder*="Svenska"]').val();
-              const level = $el.find("select").val();
+            // Languages section
+            if ($section.find("#languagesList").length > 0) {
+              const languageItems = $("#languagesList .item-card");
+              if (languageItems.length > 0) {
+                html +=
+                  '<div class="cv-section"><h2><i class="fas fa-language"></i> Språk</h2>';
+                languageItems.each((index, element) => {
+                  const $el = $(element);
+                  const language = $el
+                    .find('input[placeholder*="Svenska"]')
+                    .val();
+                  const level = $el.find("select").val();
 
-              if (language) {
-                html += `
-                                 <div class="cv-item">
-                                     <div class="cv-item-title">${language}</div>
-                                     ${
-                                       level
-                                         ? `<div class="cv-item-meta">${level}</div>`
-                                         : ""
-                                     }
-                                 </div>
-                             `;
+                  if (language) {
+                    html += `
+                      <div class="cv-item">
+                        <div class="cv-item-title">${language}</div>
+                        ${
+                          level
+                            ? `<div class="cv-item-meta">${level}</div>`
+                            : ""
+                        }
+                      </div>
+                    `;
+                  }
+                });
+                html += "</div>";
               }
-            });
-            html += "</div>";
-          }
+            }
 
-          // Links - Read directly from DOM
-          const linkItems = $("#linksList .item-card");
-          if (linkItems.length > 0) {
-            html +=
-              '<div class="cv-section"><h2><i class="fas fa-link"></i> Länkar & Certifikat</h2>';
-            linkItems.each((index, element) => {
-              const $el = $(element);
-              const title = $el.find('input[placeholder*="LinkedIn"]').val();
-              const url = $el.find('input[type="url"]').val();
+            // Links section
+            if ($section.find("#linksList").length > 0) {
+              const linkItems = $("#linksList .item-card");
+              if (linkItems.length > 0) {
+                html +=
+                  '<div class="cv-section"><h2><i class="fas fa-link"></i> Länkar & Certifikat</h2>';
+                linkItems.each((index, element) => {
+                  const $el = $(element);
+                  const title = $el
+                    .find('input[placeholder*="LinkedIn"]')
+                    .val();
+                  const url = $el.find('input[type="url"]').val();
 
-              if (title && url) {
-                html += `
-                                 <div class="cv-item">
-                                     <div class="cv-item-title">
-                                         <a href="${url}" target="_blank">${title}</a>
-                                     </div>
-                                 </div>
-                             `;
+                  if (title && url) {
+                    html += `
+                      <div class="cv-item">
+                        <div class="cv-item-title">
+                          <a href="${url}" target="_blank">${title}</a>
+                        </div>
+                      </div>
+                    `;
+                  }
+                });
+                html += "</div>";
               }
-            });
-            html += "</div>";
-          }
+            }
+          });
 
           preview.html(html);
         }
@@ -1751,7 +1853,25 @@
 
       // Initialize the CV Builder when the page loads
       $(document).ready(() => {
-        new CVBuilder();
+        window.cvBuilder = new CVBuilder();
+
+        // Initialize sortable functionality for sections
+        const sortableSections = Sortable.create(
+          document.getElementById("sortable-sections"),
+          {
+            handle:
+              ".section-header:not(.personal-info-section .section-header)",
+            animation: 200,
+            ghostClass: "sortable-ghost",
+            chosenClass: "sortable-chosen",
+            onEnd: function (evt) {
+              // Update CV preview when sections are reordered
+              if (window.cvBuilder) {
+                window.cvBuilder.updatePreview();
+              }
+            },
+          }
+        );
       });
     </script>
   </body>
